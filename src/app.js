@@ -1,13 +1,14 @@
 require("dotenv").config();
 const express = require("express");
+const orderRoutes = require("./routes/orderRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware para parsing de JSON
+// JSON parsing middleware
 app.use(express.json());
 
-// Rota de teste
+// test route
 app.get("/", (req, res) => {
   res.json({
     message: "API de Gerenciamento de Pedidos está funcionando!",
@@ -15,7 +16,10 @@ app.get("/", (req, res) => {
   });
 });
 
-// Iniciar servidor
+// register order routes
+app.use("/order", orderRoutes);
+
+// init server
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Server port: ${PORT}`);
 });
