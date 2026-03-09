@@ -2,21 +2,21 @@
 
 API REST desenvolvida em Node.js para gerenciamento de pedidos, utilizando Express, PostgreSQL e Prisma ORM.
 
-## 🚀 Tecnologias
+## Tecnologias
 
-- **Node.js** - Runtime JavaScript
-- **Express** - Framework web
-- **PostgreSQL** - Banco de dados relacional
-- **Prisma ORM** - Object-Relational Mapping
-- **JavaScript** - Linguagem de programação
+- **Node.js**
+- **Express**
+- **PostgreSQL**
+- **Prisma ORM**
+- **JavaScript**
 
-## 📋 Pré-requisitos
+## Requisitos
 
 - Node.js (versão 16 ou superior)
-- PostgreSQL (ou conta no Supabase)
+- PostgreSQL local (ou conta free no Supabase)
 - npm ou yarn
 
-## 🔧 Instalação
+## Instalação
 
 1. Clone o repositório:
 
@@ -33,7 +33,13 @@ npm install
 
 3. Configure as variáveis de ambiente:
 
-Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+Copie o arquivo `.env.example` para `.env` e configure suas credenciais:
+
+```bash
+copy .env.example .env
+```
+
+Edite o arquivo `.env` com suas credenciais reais:
 
 ```env
 PORT=3000
@@ -50,18 +56,17 @@ DATABASE_URL="postgresql://postgres.xxxxx:sua-senha@aws-0-us-west-2.pooler.supab
 4. Execute as migrations do Prisma:
 
 ```bash
-npx prisma migrate dev --name init
-```
-
-5. Gere o Prisma Client:
-
-```bash
+npx prisma migrate deploy
 npx prisma generate
 ```
 
-## ▶️ Como Executar
+**Nota:** As migrations já estão criadas no projeto. O comando `migrate deploy` irá aplicá-las ao seu banco de dados.
 
-### Modo Desenvolvimento (com hot-reload):
+## Como Executar
+
+**IMPORTANTE:** Antes de executar, certifique-se de ter configurado o arquivo `.env` com suas credenciais do banco de dados e executado as migrations.
+
+### Desenvolvimento (com hot-reload):
 
 ```bash
 npm run dev
@@ -75,7 +80,7 @@ npm start
 
 A API estará disponível em: `http://localhost:3000`
 
-## 📚 Documentação da API
+## Documentação
 
 ### Base URL
 
@@ -332,7 +337,7 @@ O sufixo `-01` é automaticamente removido.
 
 ---
 
-## ⚠️ Tratamento de Erros
+## Error-handling
 
 A API retorna erros no seguinte formato:
 
@@ -344,15 +349,6 @@ A API retorna erros no seguinte formato:
   }
 }
 ```
-
-### Códigos de Status HTTP
-
-- **200** - Sucesso
-- **201** - Criado com sucesso
-- **204** - Deletado com sucesso (sem conteúdo)
-- **400** - Erro de validação
-- **404** - Recurso não encontrado
-- **500** - Erro interno do servidor
 
 ### Exemplos de Erros
 
@@ -380,7 +376,7 @@ A API retorna erros no seguinte formato:
 
 ---
 
-## 🗂️ Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 order-management-api/
@@ -411,7 +407,7 @@ order-management-api/
 
 ---
 
-## 🗄️ Modelo de Dados
+## Modelo de Dados
 
 ### Order (Pedido)
 
@@ -439,7 +435,7 @@ model Item {
 
 ---
 
-## 🧪 Testando a API
+## Testando a API
 
 ### Usando Postman ou Insomnia
 
@@ -453,7 +449,7 @@ Todos os exemplos de cURL estão disponíveis na seção de documentação de ca
 
 ---
 
-## 📝 Comandos Úteis
+## Comandos Úteis
 
 ```bash
 # Instalar dependências
@@ -480,18 +476,6 @@ npx prisma migrate reset
 
 ---
 
-## 🤝 Contribuindo
-
 Este projeto foi desenvolvido como parte de um teste técnico.
 
 ---
-
-## 📄 Licença
-
-ISC
-
----
-
-## 👤 Autor
-
-Desenvolvido como parte de processo seletivo.
