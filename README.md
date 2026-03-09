@@ -1,19 +1,19 @@
 # API de Gerenciamento de Pedidos
 
-API REST desenvolvida em Node.js para gerenciamento de pedidos, utilizando Express, PostgreSQL e Prisma ORM.
+API REST desenvolvida em Node.js para gerenciamento de pedidos, utilizando Express e PostgreSQL.
 
 ## Tecnologias
 
 - **Node.js**
 - **Express**
 - **PostgreSQL**
-- **Prisma ORM**
+- **pg** (PostgreSQL driver)
 - **JavaScript**
 
 ## Requisitos
 
 - Node.js (versão 16 ou superior)
-- PostgreSQL local (ou conta free no Supabase)
+- PostgreSQL (local ou Supabase)
 - npm ou yarn
 
 ## Instalação
@@ -53,18 +53,33 @@ PORT=3000
 DATABASE_URL="postgresql://postgres.xxxxx:sua-senha@aws-0-us-west-2.pooler.supabase.com:5432/postgres"
 ```
 
-4. Execute as migrations do Prisma:
+4. Crie as tabelas no banco de dados:
 
-```bash
-npx prisma migrate deploy
-npx prisma generate
+Execute o seguinte SQL no seu banco PostgreSQL:
+
+```sql
+CREATE TABLE IF NOT EXISTS "Order" (
+  "orderId" TEXT PRIMARY KEY,
+  "value" DOUBLE PRECISION NOT NULL,
+  "creationDate" TIMESTAMP(3) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "Items" (
+  "id" SERIAL PRIMARY KEY,
+  "orderId" TEXT NOT NULL,
+  "productId" INTEGER NOT NULL,
+  "quantity" INTEGER NOT NULL,
+  "price" DOUBLE PRECISION NOT NULL,
+  CONSTRAINT "Items_orderId_fkey" FOREIGN KEY ("orderId")
+    REFERENCES "Order"("orderId") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS "Items_orderId_idx" ON "Items"("orderId");
 ```
-
-**Nota:** As migrations já estão criadas no projeto. O comando `migrate deploy` irá aplicá-las ao seu banco de dados.
 
 ## Como Executar
 
-**IMPORTANTE:** Antes de executar, certifique-se de ter configurado o arquivo `.env` com suas credenciais do banco de dados e executado as migrations.
+**IMPORTANTE:** Antes de executar, certifique-se de ter configurado o arquivo `.env` com suas credenciais do banco de dados e criado as tabelas.
 
 ### Desenvolvimento (com hot-reload):
 
@@ -188,7 +203,7 @@ curl http://localhost:3000/order/v10089015vdb
 
 #### 3. Listar Todos os Pedidos
 
-**GET** `/order/list`
+**GET** `/order`
 
 Retorna a lista de todos os pedidos cadastrados.
 
@@ -216,7 +231,7 @@ Retorna a lista de todos os pedidos cadastrados.
 **Exemplo com cURL:**
 
 ```bash
-curl http://localhost:3000/order/list
+curl http://localhost:3000/order
 ```
 
 ---
@@ -381,9 +396,6 @@ A API retorna erros no seguinte formato:
 ```
 order-management-api/
 │
-├── prisma/
-│   └── schema.prisma          # Schema do banco de dados
-│
 ├── src/
 │   ├── controllers/
 │   │   └── orderController.js # Controladores HTTP
@@ -395,7 +407,7 @@ order-management-api/
 │   │   └── orderRoutes.js     # Definição de rotas
 │   │
 │   ├── database/
-│   │   └── prismaClient.js    # Cliente Prisma
+│   │   └── pgClient.js        # Cliente PostgreSQL
 │   │
 │   └── app.js                 # Configuração do Express
 │
@@ -411,26 +423,25 @@ order-management-api/
 
 ### Order (Pedido)
 
-```prisma
-model Order {
-  orderId      String   @id
-  value        Float
-  creationDate DateTime
-  items        Item[]
-}
+```sql
+CREATE TABLE "Order" (
+  "orderId" TEXT PRIMARY KEY,
+  "value" DOUBLE PRECISION NOT NULL,
+  "creationDate" TIMESTAMP(3) NOT NULL
+);
 ```
 
-### Item
+### Items
 
-```prisma
-model Item {
-  id        Int    @id @default(autoincrement())
-  orderId   String
-  productId Int
-  quantity  Int
-  price     Float
-  order     Order  @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
-}
+```sql
+CREATE TABLE "Items" (
+  "id" SERIAL PRIMARY KEY,
+  "orderId" TEXT NOT NULL,
+  "productId" INTEGER NOT NULL,
+  "quantity" INTEGER NOT NULL,
+  "price" DOUBLE PRECISION NOT NULL,
+  FOREIGN KEY ("orderId") REFERENCES "Order"("orderId") ON DELETE CASCADE
+);
 ```
 
 ---
@@ -449,33 +460,4 @@ Todos os exemplos de cURL estão disponíveis na seção de documentação de ca
 
 ---
 
-## Comandos Úteis
-
-```bash
-# Instalar dependências
-npm install
-
-# Rodar em desenvolvimento
-npm run dev
-
-# Rodar em produção
-npm start
-
-# Visualizar banco de dados (Prisma Studio)
-npx prisma studio
-
-# Criar nova migration
-npx prisma migrate dev --name nome_da_migration
-
-# Gerar Prisma Client
-npx prisma generate
-
-# Resetar banco de dados
-npx prisma migrate reset
-```
-
----
-
 Este projeto foi desenvolvido como parte de um teste técnico.
-
----
